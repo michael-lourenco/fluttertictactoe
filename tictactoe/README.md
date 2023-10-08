@@ -7,3 +7,7 @@ Neste primeiro momento trata-se apenas do tutorial que segui neste vídeo:
 # Objetivo
 
 Inicialmente, aperfeiçoar este código de forma que fique dentro do Clean Code e dentro dos padrões do Flutter.
+
+# Task
+
+[TODO] Alterar todo o código para o idioma Inglês 

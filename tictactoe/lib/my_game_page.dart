@@ -8,16 +8,16 @@ class MyGame extends StatefulWidget {
 }
 
 class _MyGameState extends State<MyGame> {
-  List grade = [
+  List gameGrid = [
     ['', '', ''],
     ['', '', ''],
     ['', '', ''],
   ];
 
-  int jogadas = 0;
-  String jogadorAtual = 'X';
-  String textoInformativo = 'Vamos comecar?';
-  bool jogoIniciado = false;
+  int moves = 0;
+  String currentPlayer = 'X';
+  String informativeText = 'Vamos comecar?';
+  bool gameStarted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class _MyGameState extends State<MyGame> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           AbsorbPointer(
-            absorbing: !jogoIniciado,
+            absorbing: !gameStarted,
             child: Column(
               children: [
                 Row(
@@ -47,25 +47,25 @@ class _MyGameState extends State<MyGame> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    myButton(linha: 0, coluna: 0),
-                    myButton(linha: 0, coluna: 1),
-                    myButton(linha: 0, coluna: 2),
+                    myButton(row: 0, column: 0),
+                    myButton(row: 0, column: 1),
+                    myButton(row: 0, column: 2),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    myButton(linha: 1, coluna: 0),
-                    myButton(linha: 1, coluna: 1),
-                    myButton(linha: 1, coluna: 2),
+                    myButton(row: 1, column: 0),
+                    myButton(row: 1, column: 1),
+                    myButton(row: 1, column: 2),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    myButton(linha: 2, coluna: 0),
-                    myButton(linha: 2, coluna: 1),
-                    myButton(linha: 2, coluna: 2),
+                    myButton(row: 2, column: 0),
+                    myButton(row: 2, column: 1),
+                    myButton(row: 2, column: 2),
                   ],
                 ),
               ],
@@ -76,7 +76,7 @@ class _MyGameState extends State<MyGame> {
               Padding(
                 padding: EdgeInsets.all(15.0),
                 child: Text(
-                  textoInformativo,
+                  informativeText,
                   style: TextStyle(
                       fontSize: 20,
                       color: Colors.black,
@@ -84,9 +84,9 @@ class _MyGameState extends State<MyGame> {
                 ),
               ),
               AbsorbPointer(
-                absorbing: jogoIniciado,
+                absorbing: gameStarted,
                 child:
-                    Opacity(opacity: jogoIniciado ? 0 : 1, child: btInicio()),
+                    Opacity(opacity: gameStarted ? 0 : 1, child: btnStart()),
               ),
             ],
           ),
@@ -95,21 +95,21 @@ class _MyGameState extends State<MyGame> {
     );
   }
 
-  Widget myButton({required int linha, required int coluna}) {
+  Widget myButton({required int row, required int column}) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: AbsorbPointer(
-        absorbing: grade[linha][coluna] == '' ? false : true,
+        absorbing: gameGrid[row][column] == '' ? false : true,
         child: ElevatedButton(
           onPressed: () {
             setState(() {
-              clique(linha: linha, coluna: coluna);
+              clique(row: row, column: column);
             });
           },
           style: ElevatedButton.styleFrom(
               fixedSize: const Size(100, 100), primary: Colors.black38),
           child: Text(
-            grade[linha][coluna],
+            gameGrid[row][column],
             style: TextStyle(fontSize: 50),
           ),
         ),
@@ -117,22 +117,22 @@ class _MyGameState extends State<MyGame> {
     );
   }
 
-  Widget btInicio() {
+  Widget btnStart() {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: ElevatedButton(
         onPressed: () {
           setState(() {
-            jogoIniciado = true;
-            jogadas = 0;
-            grade = List.generate(3, (i) => List.filled(3, ''));
-            textoInformativo = '$jogadorAtual é sua vez.';
+            gameStarted = true;
+            moves = 0;
+            gameGrid = List.generate(3, (i) => List.filled(3, ''));
+            informativeText = '$currentPlayer é sua vez.';
           });
         },
         style: ElevatedButton.styleFrom(
             fixedSize: const Size(200, 50), primary: Colors.amber),
         child: Text(
-          jogadas > 0 ? "Jogar Novamente" : "Bora Jogar!",
+          moves > 0 ? "Jogar Novamente" : "Bora Jogar!",
           style: TextStyle(fontSize: 20),
         ),
       ),
@@ -140,62 +140,60 @@ class _MyGameState extends State<MyGame> {
   }
 
   // logica do click
-  void clique({required int linha, required int coluna}) {
-    jogadas++;
-    grade[linha][coluna] = jogadorAtual;
-    bool existeVencedor =
-        verificaVencedor(jogador: jogadorAtual, linha: linha, coluna: coluna);
+  void clique({required int row, required int column}) {
+    moves++;
+    gameGrid[row][column] = currentPlayer;
+    bool hasWinner = verifyWinner(player: currentPlayer, row: row, column: column);
 
-    if (existeVencedor) {
-      textoInformativo = '$jogadorAtual Venceu!';
-      jogoIniciado = false;
-    } else if (existeVencedor == false && jogadas == 9) {
-      textoInformativo = 'Empate!';
-      jogoIniciado = false;
+    if (hasWinner) {
+      informativeText = '$currentPlayer win!';
+      gameStarted = false;
+    } else if (hasWinner == false && moves == 9) {
+      informativeText = 'Empate!';
+      gameStarted = false;
     } else {
-      if (jogadorAtual == 'X') {
-        jogadorAtual = 'O';
+      if (currentPlayer == 'X') {
+        currentPlayer = 'O';
       } else {
-        jogadorAtual = 'X';
+        currentPlayer = 'X';
       }
-      textoInformativo = '$jogadorAtual é a sua vez.';
+      informativeText = '$currentPlayer é a sua vez.';
     }
   }
 
-  bool verificaVencedor(
-      {required String jogador, required int linha, required int coluna}) {
-    bool venceu = true;
-    // verifica linha
+  bool verifyWinner({required String player, required int row, required int column}) {
+    bool win = true;
+    // verify row
     for (int i = 0; i < 3; i++) {
-      if (grade[linha][i] != jogador) {
-        venceu = false;
+      if (gameGrid[row][i] != player) {
+        win = false;
         break;
       }
     }
 
-    // verifica coluna
-    if (venceu == false) {
+    // verify column
+    if (win == false) {
       for (int j = 0; j < 3; j++) {
-        if (grade[j][coluna] != jogador) {
-          venceu = false;
+        if (gameGrid[j][column] != player) {
+          win = false;
           break;
         } else {
-          venceu = true;
+          win = true;
         }
       }
     }
 
-    // verifica diagonal
-    if (venceu == false) {
-      if (grade[1][1] == jogador) {
-        if (grade[0][0] == jogador && grade[2][2] == jogador) {
-          venceu == true;
-        } else if (grade[0][2] == jogador && grade[2][0] == jogador) {
-          venceu = true;
+    // verify diagonal
+    if (win == false) {
+      if (gameGrid[1][1] == player) {
+        if (gameGrid[0][0] == player && gameGrid[2][2] == player) {
+          win == true;
+        } else if (gameGrid[0][2] == player && gameGrid[2][0] == player) {
+          win = true;
         }
       }
     }
 
-    return venceu;
+    return win;
   }
 }
