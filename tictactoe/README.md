@@ -10,4 +10,4 @@ Inicialmente, aperfeiçoar este código de forma que fique dentro do Clean Code 
 
 # Task
 
-[TODO] Alterar todo o código para o idioma Inglês 
+[DONE] Alterar todo o código para o idioma Inglês 
