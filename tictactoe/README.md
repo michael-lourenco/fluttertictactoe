@@ -11,3 +11,4 @@ Inicialmente, aperfeiçoar este código de forma que fique dentro do Clean Code 
 # Task
 
 [DONE] Alterar todo o código para o idioma Inglês 
+[TODO] Criar uma estrutura de diretórios melhor
